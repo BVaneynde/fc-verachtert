@@ -69,6 +69,21 @@ export default function AdminPanel({ currentUser, onLogout }) {
         })
       }
       
+      // If unmarking as match, delete any match entries for this event
+      if (!newIsMatch && isMatch) {
+        // Find and delete match with same date and opponent
+        try {
+          await apiClient.delete('/api/matches/by-event', {
+            data: { 
+              event_date: eventDate, 
+              opponent: eventTitle 
+            }
+          })
+        } catch (err) {
+          console.log('Match may already be deleted:', err)
+        }
+      }
+      
       alert(`✅ Event ${newIsMatch ? 'als wedstrijd gemarkeerd' : 'uit wedstrijdlijst verwijderd'}`)
       fetchAdminData()
     } catch (error) {

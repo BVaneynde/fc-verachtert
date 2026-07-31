@@ -199,4 +199,32 @@ router.post('/:id/appearances', async (req, res) => {
   }
 })
 
+// DELETE /api/matches/by-event - Delete match by event date and opponent
+router.delete('/by-event', async (req, res) => {
+  try {
+    const { event_date, opponent } = req.body
+
+    if (!event_date || !opponent) {
+      return res.status(400).json({ error: 'Missing event_date or opponent' })
+    }
+
+    // Parse the event_date to match database format
+    const eventDate = new Date(event_date).toISOString().split('T')[0]
+
+    const { data, error } = await req.supabase
+      .from('matches')
+      .delete()
+      .ilike('opponent', opponent)
+      .gte('date', `${eventDate}T00:00:00`)
+      .lt('date', `${eventDate}T23:59:59`)
+      .select()
+
+    if (error) throw error
+
+    res.json({ message: `Deleted ${data.length} match(es)`, count: data.length })
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+})
+
 export default router

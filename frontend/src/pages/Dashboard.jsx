@@ -25,14 +25,17 @@ export default function Dashboard({ isAuthenticated, currentUser }) {
       // Separate upcoming and recent
       const now = new Date()
       
+      // Deduplicate matches by ID
+      const uniqueMatches = Array.from(new Map(matchesRes.data.map(m => [m.id, m])).values())
+      
       // Get upcoming matches, sort by date (earliest first), take 3
-      const upcoming = matchesRes.data
+      const upcoming = uniqueMatches
         .filter(m => new Date(m.date) > now)
         .sort((a, b) => new Date(a.date) - new Date(b.date))
         .slice(0, 3)
       
       // Get recent matches, sort by date (latest first), take 1
-      const recent = matchesRes.data
+      const recent = uniqueMatches
         .filter(m => new Date(m.date) <= now)
         .sort((a, b) => new Date(b.date) - new Date(a.date))
         .slice(0, 1)

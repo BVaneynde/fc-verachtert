@@ -68,98 +68,118 @@ export default function Dashboard({ isAuthenticated, currentUser }) {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Upcoming Matches */}
             <div className="md:col-span-2">
-              <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+              <div className="bg-white rounded-lg shadow-md p-6 mb-8 border-t-4 border-fcred">
                 <h2 className="text-2xl font-bold text-gray-800 mb-4">📅 Komende Wedstrijden</h2>
                 {upcomingMatches.length > 0 ? (
-                  <div className="space-y-4">
-                    {upcomingMatches.map(match => (
-                      <Link
-                        key={match.id}
-                        to={`/match/${match.id}`}
-                        className="block p-4 border-l-4 border-blue-500 hover:bg-gray-50 rounded cursor-pointer transition"
-                      >
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <p className="font-semibold text-gray-800">
-                              FC Verachtert - {match.opponent}
-                            </p>
-                            <p className="text-sm text-gray-600">
-                              🕐 {new Date(match.date).toLocaleDateString('nl-NL', {
-                                weekday: 'long',
-                                day: 'numeric',
-                                month: 'long',
-                                hour: '2-digit',
-                                minute: '2-digit'
-                              })}
-                            </p>
-                            {match.location && (
-                              <p className="text-sm text-gray-600">📍 {match.location}</p>
-                            )}
+                  <div className="space-y-3">
+                    {upcomingMatches.map(match => {
+                      const daysUntil = Math.ceil((new Date(match.date) - new Date()) / (1000 * 60 * 60 * 24))
+                      return (
+                        <Link
+                          key={match.id}
+                          to={`/match/${match.id}`}
+                          className="block p-4 border-l-4 border-fcred hover:bg-red-50 rounded cursor-pointer transition"
+                        >
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1">
+                              <p className="font-semibold text-gray-800">
+                                FC Verachtert vs {match.opponent}
+                              </p>
+                              <p className="text-sm text-gray-600 mt-1">
+                                🕐 {new Date(match.date).toLocaleDateString('nl-NL', {
+                                  weekday: 'long',
+                                  day: 'numeric',
+                                  month: 'long',
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })}
+                              </p>
+                              {match.location && (
+                                <p className="text-sm text-gray-600">📍 {match.location}</p>
+                              )}
+                            </div>
+                            <div className="text-right ml-4">
+                              <span className={`inline-block px-3 py-1 rounded-full text-sm font-bold ${
+                                daysUntil === 0 ? 'bg-fcred text-white' : 'bg-red-100 text-fcred'
+                              }`}>
+                                {daysUntil === 0 ? 'VANDAAG! 🔥' : `${daysUntil}d`}
+                              </span>
+                            </div>
                           </div>
-                          <span className="text-blue-600 font-semibold">→</span>
-                        </div>
-                      </Link>
-                    ))}
+                        </Link>
+                      )
+                    })}
                   </div>
                 ) : (
-                  <p className="text-gray-500">Geen komende wedstrijden</p>
+                  <p className="text-gray-500 text-center py-8">📭 Geen komende wedstrijden</p>
                 )}
               </div>
 
               {/* Recent Results */}
-              <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="bg-white rounded-lg shadow-md p-6 border-t-4 border-fcred">
                 <h2 className="text-2xl font-bold text-gray-800 mb-4">🏁 Recente Resultaten</h2>
                 {recentMatches.length > 0 ? (
-                  <div className="space-y-4">
-                    {recentMatches.map(match => (
-                      <Link
-                        key={match.id}
-                        to={`/match/${match.id}`}
-                        className="block p-4 border-l-4 border-green-500 hover:bg-gray-50 rounded cursor-pointer transition"
-                      >
-                        <div className="flex justify-between items-center">
-                          <div>
-                            <p className="font-semibold text-gray-800">
-                              FC Verachtert - {match.opponent}
-                            </p>
-                            <p className="text-sm text-gray-600">
-                              {new Date(match.date).toLocaleDateString('nl-NL')}
-                            </p>
+                  <div className="space-y-3">
+                    {recentMatches.map(match => {
+                      const isWin = (match.score_home ?? 0) > (match.score_away ?? 0)
+                      const isDraw = (match.score_home ?? 0) === (match.score_away ?? 0)
+                      return (
+                        <Link
+                          key={match.id}
+                          to={`/match/${match.id}`}
+                          className="block p-4 border-l-4 border-fcred hover:bg-red-50 rounded cursor-pointer transition"
+                        >
+                          <div className="flex justify-between items-center">
+                            <div className="flex-1">
+                              <p className="font-semibold text-gray-800">
+                                FC Verachtert vs {match.opponent}
+                              </p>
+                              <p className="text-sm text-gray-600">
+                                📅 {new Date(match.date).toLocaleDateString('nl-NL')}
+                              </p>
+                            </div>
+                            <div className="text-right">
+                              <span className={`text-2xl font-bold ${
+                                isWin ? 'text-green-600' : isDraw ? 'text-yellow-600' : 'text-red-600'
+                              }`}>
+                                {match.score_home ?? '-'} - {match.score_away ?? '-'}
+                              </span>
+                              <p className="text-xs font-semibold text-gray-600 mt-1">
+                                {isWin ? '✅ Gewonnen' : isDraw ? '🤝 Gelijkspel' : '❌ Verloren'}
+                              </p>
+                            </div>
                           </div>
-                          <span className="text-2xl font-bold text-green-600">
-                            {match.score_home ?? '-'} - {match.score_away ?? '-'}
-                          </span>
-                        </div>
-                      </Link>
-                    ))}
+                        </Link>
+                      )
+                    })}
                   </div>
                 ) : (
-                  <p className="text-gray-500">Geen recente wedstrijden</p>
+                  <p className="text-gray-500 text-center py-8">📭 Geen recente wedstrijden</p>
                 )}
               </div>
             </div>
 
             {/* Top Scorers */}
-            <div className="bg-white rounded-lg shadow-md p-6 h-fit">
+            <div className="bg-white rounded-lg shadow-md p-6 h-fit border-t-4 border-fcred">
               <h2 className="text-2xl font-bold text-gray-800 mb-4">🏆 Top Scorers</h2>
               {topScorers.length > 0 ? (
                 <div className="space-y-3">
                   {topScorers.map((player, idx) => (
-                    <div key={player.player_id} className="flex justify-between items-center py-2 border-b">
+                    <div key={player.player_id} className="flex justify-between items-center p-3 bg-red-50 rounded border-l-4 border-fcred">
                       <div>
                         <p className="font-semibold text-gray-800">
-                          #{idx + 1} {player.player_name}
+                          🥇 {player.player_name}
                         </p>
-                        <p className="text-xs text-gray-500">
-                          {player.goals} doelpunten | {player.appearances} matchen
+                        <p className="text-xs text-gray-600">
+                          {player.appearances} matchen
                         </p>
                       </div>
-                      <span className="text-xl font-bold text-orange-500">{player.goals}</span>
+                      <span className="text-2xl font-bold text-fcred">{player.goals}⚽</span>
                     </div>
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-500">Geen statistieken beschikbaar</p>
+                <p className="text-gray-500 text-center py-8">Geen statistieken beschikbaar</p>
               )}
             </div>
           </div>

@@ -18,6 +18,56 @@ router.get('/', async (req, res) => {
   }
 })
 
+// GET /api/matches/head-to-head - Get head-to-head stats against opponents
+router.get('/head-to-head/all', async (req, res) => {
+  try {
+    const { data: matches, error } = await req.supabase
+      .from('matches')
+      .select('id, opponent, date, score_home, score_away')
+      .order('date', { ascending: false })
+
+    if (error) throw error
+
+    // Group by opponent and calculate stats
+    const headToHead = {}
+
+    matches.forEach(match => {
+      const opponent = match.opponent || 'Unknown'
+      
+      if (!headToHead[opponent]) {
+        headToHead[opponent] = {
+          opponent: opponent,
+          played: 0,
+          won: 0,
+          drawn: 0,
+          lost: 0,
+          goals_for: 0,
+          goals_against: 0,
+          last_match: null
+        }
+      }
+
+      headToHead[opponent].played += 1
+      headToHead[opponent].goals_for += match.score_home || 0
+      headToHead[opponent].goals_against += match.score_away || 0
+      headToHead[opponent].last_match = match.date
+
+      const diff = (match.score_home || 0) - (match.score_away || 0)
+      if (diff > 0) headToHead[opponent].won += 1
+      else if (diff < 0) headToHead[opponent].lost += 1
+      else headToHead[opponent].drawn += 1
+    })
+
+    // Convert to array and sort by most played
+    const results = Object.values(headToHead)
+      .sort((a, b) => b.played - a.played)
+
+    res.json(results)
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+})
+
 // GET /api/matches/:id - Get single match with player stats
 router.get('/:id', async (req, res) => {
   try {

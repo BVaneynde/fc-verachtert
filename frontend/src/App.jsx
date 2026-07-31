@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom'
 import Dashboard from './pages/Dashboard'
 import MatchDetail from './pages/MatchDetail'
 import Statistics from './pages/Statistics'
+import HeadToHead from './pages/HeadToHead'
 import AdminPanel from './pages/AdminPanel'
 import Login from './pages/Login'
 import { useEffect, useState } from 'react'
@@ -46,6 +47,7 @@ function App() {
         <Route path="/" element={<Dashboard isAuthenticated={isAuthenticated} currentUser={currentUser} />} />
         <Route path="/match/:id" element={<MatchDetail isAuthenticated={isAuthenticated} currentUser={currentUser} />} />
         <Route path="/statistics" element={<Statistics />} />
+        <Route path="/head-to-head" element={<HeadToHead />} />
         {isAuthenticated && currentUser?.role === 'admin' && (
           <Route path="/admin" element={<AdminPanel currentUser={currentUser} onLogout={handleLogout} />} />
         )}

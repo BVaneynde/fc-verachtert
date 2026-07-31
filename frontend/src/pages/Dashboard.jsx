@@ -41,6 +41,9 @@ export default function Dashboard({ isAuthenticated, currentUser }) {
             <Link to="/statistics" className="text-white hover:text-red-100 font-semibold transition">
               📊 Statistieken
             </Link>
+            <Link to="/head-to-head" className="text-white hover:text-red-100 font-semibold transition">
+              🏆 Head-to-Head
+            </Link>
             {isAuthenticated && currentUser?.role === 'admin' && (
               <Link to="/admin" className="text-white hover:text-red-100 font-semibold transition">
                 ⚙️ Admin

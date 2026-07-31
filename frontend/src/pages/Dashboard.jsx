@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import apiClient from '../utils/api'
 import { Link } from 'react-router-dom'
 
 export default function Dashboard({ isAuthenticated, currentUser }) {
@@ -16,8 +16,8 @@ export default function Dashboard({ isAuthenticated, currentUser }) {
     try {
       setLoading(true)
       // TODO: Replace with actual API calls
-      const matchesRes = await axios.get('/api/matches')
-      const statsRes = await axios.get('/api/players/stats')
+      const matchesRes = await apiClient.get('/api/matches')
+      const statsRes = await apiClient.get('/api/players/stats')
       
       // Separate upcoming and recent
       const now = new Date()

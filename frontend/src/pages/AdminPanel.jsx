@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import apiClient from '../utils/api'
 import { useNavigate } from 'react-router-dom'
 
 export default function AdminPanel({ currentUser, onLogout }) {
@@ -23,8 +23,8 @@ export default function AdminPanel({ currentUser, onLogout }) {
     try {
       setLoading(true)
       // TODO: Replace with actual API calls
-      const playersRes = await axios.get('/api/players')
-      const eventsRes = await axios.get('/api/calendar/events')
+      const playersRes = await apiClient.get('/api/players')
+      const eventsRes = await apiClient.get('/api/calendar/events')
       setPlayers(playersRes.data)
       setCalendarEvents(eventsRes.data)
     } catch (error) {
@@ -39,7 +39,7 @@ export default function AdminPanel({ currentUser, onLogout }) {
     if (!newPlayerName.trim()) return
 
     try {
-      await axios.post('/api/players', { name: newPlayerName })
+      await apiClient.post('/api/players', { name: newPlayerName })
       alert('✅ Speler toegevoegd!')
       setNewPlayerName('')
       fetchAdminData()
@@ -54,12 +54,12 @@ export default function AdminPanel({ currentUser, onLogout }) {
       const newIsMatch = !isMatch
       
       // Update the event
-      await axios.put(`/api/calendar/${eventId}/mark-as-match`, { is_match: newIsMatch })
+      await apiClient.put(`/api/calendar/${eventId}/mark-as-match`, { is_match: newIsMatch })
       
       // If marking as match and not already marked, create a match entry
       if (newIsMatch && !isMatch) {
         // Create match from calendar event
-        await axios.post('/api/matches', {
+        await apiClient.post('/api/matches', {
           date: eventDate,
           opponent: eventTitle,
           location: 'TBD',
@@ -79,7 +79,7 @@ export default function AdminPanel({ currentUser, onLogout }) {
   const handleSyncCalendar = async () => {
     try {
       setSyncing(true)
-      const res = await axios.post('/api/calendar/sync')
+      const res = await apiClient.post('/api/calendar/sync')
       alert(`✅ ${res.data.eventsCount} nieuwe evenementen opgehaald!`)
       fetchAdminData()
     } catch (error) {

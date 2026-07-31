@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import apiClient from '../utils/api'
 
 export default function Login({ onLogin }) {
   const [email, setEmail] = useState('')
@@ -15,12 +15,11 @@ export default function Login({ onLogin }) {
     setLoading(true)
 
     try {
-      // TODO: Replace with actual API call
-      const res = await axios.post('/api/auth/login', { email, password })
+      const res = await apiClient.post('/api/auth/login', { email, password })
       onLogin(res.data.user, res.data.token)
       navigate('/admin')
     } catch (err) {
-      setError(err.response?.data?.message || 'Login mislukt. Controleer je gegevens.')
+      setError(err.response?.data?.error || err.response?.data?.message || 'Login mislukt. Controleer je gegevens.')
     } finally {
       setLoading(false)
     }

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import apiClient from '../utils/api'
 
 export default function MatchDetail({ isAuthenticated, currentUser }) {
   const { id } = useParams()
@@ -24,9 +24,9 @@ export default function MatchDetail({ isAuthenticated, currentUser }) {
     try {
       setLoading(true)
       // TODO: Replace with actual API calls
-      const matchRes = await axios.get(`/api/matches/${id}`)
-      const playersRes = await axios.get('/api/players')
-      const appearancesRes = await axios.get(`/api/matches/${id}/appearances`)
+      const matchRes = await apiClient.get(`/api/matches/${id}`)
+      const playersRes = await apiClient.get('/api/players')
+      const appearancesRes = await apiClient.get(`/api/matches/${id}/appearances`)
 
       setMatch(matchRes.data)
       setPlayers(playersRes.data)
@@ -60,7 +60,7 @@ export default function MatchDetail({ isAuthenticated, currentUser }) {
     try {
       setSaving(true)
       // Save match score
-      await axios.put(`/api/matches/${id}`, { score_home: scoreHome, score_away: scoreAway })
+      await apiClient.put(`/api/matches/${id}`, { score_home: scoreHome, score_away: scoreAway })
       
       // Prepare appearances array - all players who were present or have stats
       const appearancesArray = Object.entries(appearances).map(([playerId, data]) => ({
@@ -73,7 +73,7 @@ export default function MatchDetail({ isAuthenticated, currentUser }) {
       
       // Save all player appearances at once
       if (appearancesArray.length > 0) {
-        await axios.post(`/api/matches/${id}/appearances`, appearancesArray)
+        await apiClient.post(`/api/matches/${id}/appearances`, appearancesArray)
       }
       
       alert('✅ Wedstrijd opgeslagen!')

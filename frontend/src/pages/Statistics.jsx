@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import apiClient from '../utils/api'
 import { Link } from 'react-router-dom'
 
 export default function Statistics() {
@@ -15,7 +15,7 @@ export default function Statistics() {
     try {
       setLoading(true)
       // TODO: Replace with actual API call
-      const res = await axios.get('/api/players/stats')
+      const res = await apiClient.get('/api/players/stats')
       setStats(res.data)
     } catch (error) {
       console.error('Error fetching statistics:', error)

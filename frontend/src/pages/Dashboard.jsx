@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import apiClient from '../utils/api'
 import { Link } from 'react-router-dom'
+import { cleanOpponentName } from '../utils/helpers'
 
 export default function Dashboard({ isAuthenticated, currentUser }) {
   const [upcomingMatches, setUpcomingMatches] = useState([])
@@ -97,7 +98,7 @@ export default function Dashboard({ isAuthenticated, currentUser }) {
                           <div className="flex justify-between items-start gap-3">
                             <div className="flex-1 min-w-0">
                               <p className="font-bold text-gray-900 text-sm md:text-base group-hover:text-fcred transition truncate">
-                                FCV vs {match.opponent}
+                                FCV vs {cleanOpponentName(match.opponent)}
                               </p>
                               <p className="text-xs md:text-sm text-gray-600 mt-2">
                                 🕐 {new Date(match.date).toLocaleDateString('nl-NL', {
@@ -158,7 +159,7 @@ export default function Dashboard({ isAuthenticated, currentUser }) {
                           <div className="flex justify-between items-start gap-3">
                             <div className="flex-1 min-w-0">
                               <p className="font-bold text-gray-900 text-sm md:text-base group-hover:text-fcred transition truncate">
-                                FCV vs {match.opponent}
+                                FCV vs {cleanOpponentName(match.opponent)}
                               </p>
                               <p className="text-xs md:text-sm text-gray-600 mt-2">
                                 📅 {new Date(match.date).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' })}
@@ -193,20 +194,23 @@ export default function Dashboard({ isAuthenticated, currentUser }) {
                   {topScorers.map((player, idx) => (
                     <div 
                       key={player.player_id} 
-                      className="flex items-center justify-between p-4 bg-gradient-to-r from-yellow-50 to-white rounded-lg border-l-4 border-fcred hover:shadow-md transition group"
+                      className="flex items-center justify-between p-4 bg-white rounded-lg border-t-4 border-yellow-400 hover:shadow-lg transition group shadow-sm"
                     >
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <span className="text-xl font-black text-fcred min-w-[2rem]">#{idx + 1}</span>
+                          <span className="text-2xl font-black text-fcred min-w-[2.5rem]">#{idx + 1}</span>
                           <p className="font-bold text-gray-900 group-hover:text-fcred transition">
                             {player.player_name}
                           </p>
                         </div>
-                        <p className="text-xs text-gray-600 mt-1">
+                        <p className="text-xs text-gray-600 mt-1 font-semibold">
                           {player.appearances} matchen
                         </p>
                       </div>
-                      <span className="text-3xl font-black text-fcred">⚽ {player.goals}</span>
+                      <div className="text-center flex-shrink-0 ml-4">
+                        <span className="block text-3xl font-black text-fcred">⚽</span>
+                        <span className="block text-2xl font-black text-yellow-600">{player.goals}</span>
+                      </div>
                     </div>
                   ))}
                 </div>

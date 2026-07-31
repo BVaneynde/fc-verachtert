@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import apiClient from '../utils/api'
 import { useNavigate, Link } from 'react-router-dom'
+import { cleanOpponentName } from '../utils/helpers'
 
 export default function MatchHistory({ isAuthenticated, currentUser }) {
   const [matches, setMatches] = useState([])
@@ -160,7 +161,7 @@ export default function MatchHistory({ isAuthenticated, currentUser }) {
                     {/* Match Info */}
                     <div className="md:col-span-5">
                       <p className="font-semibold text-gray-800 group-hover:text-fcred transition">
-                        FCV vs {match.opponent}
+                        FCV vs {cleanOpponentName(match.opponent)}
                       </p>
                       {match.location && (
                         <p className="text-sm text-gray-600">📍 {match.location}</p>

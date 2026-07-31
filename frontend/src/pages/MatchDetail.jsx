@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import apiClient from '../utils/api'
+import { cleanOpponentName } from '../utils/helpers'
 
 export default function MatchDetail({ isAuthenticated, currentUser }) {
   const { id } = useParams()

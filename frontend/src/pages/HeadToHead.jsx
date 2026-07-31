@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import apiClient from '../utils/api'
 import { Link } from 'react-router-dom'
+import { cleanOpponentName } from '../utils/helpers'
 
 export default function HeadToHead() {
   const [stats, setStats] = useState([])
@@ -92,7 +93,7 @@ export default function HeadToHead() {
                 <tbody>
                   {sortedStats.map((opponent) => (
                     <tr key={opponent.opponent} className="border-b border-gray-100 hover:bg-red-50 transition">
-                      <td className="px-4 md:px-6 py-4 font-bold text-gray-900 text-sm md:text-base">{opponent.opponent}</td>
+                      <td className="px-4 md:px-6 py-4 font-bold text-gray-900 text-sm md:text-base">{cleanOpponentName(opponent.opponent)}</td>
                       <td className="text-center px-3 md:px-6 py-4 font-bold text-blue-600">{opponent.played}</td>
                       <td className="text-center px-3 md:px-6 py-4 font-bold text-green-600">{opponent.won}</td>
                       <td className="text-center px-3 md:px-6 py-4 font-bold text-yellow-600">{opponent.drawn}</td>

@@ -119,6 +119,23 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ error: 'Date and opponent required' })
     }
 
+    // Check if match already exists for this date and opponent
+    const eventDate = new Date(date).toISOString().split('T')[0]
+    const { data: existing } = await req.supabase
+      .from('matches')
+      .select('id')
+      .ilike('opponent', opponent)
+      .gte('date', `${eventDate}T00:00:00`)
+      .lt('date', `${eventDate}T23:59:59`)
+      .single()
+
+    if (existing) {
+      return res.status(409).json({ 
+        error: 'Match already exists for this date and opponent',
+        existingId: existing.id
+      })
+    }
+
     const { data, error } = await req.supabase
       .from('matches')
       .insert([{
@@ -194,6 +211,60 @@ router.post('/:id/appearances', async (req, res) => {
     if (error) throw error
 
     res.json({ message: 'Appearances saved', count: data.length })
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+})
+
+// POST /api/matches/create-or-skip - Create match only if it doesn't exist
+router.post('/create-or-skip', async (req, res) => {
+  try {
+    const { date, opponent, location, notes, is_official_match } = req.body
+
+    if (!date || !opponent) {
+      return res.status(400).json({ error: 'Missing date or opponent' })
+    }
+
+    // Parse the date to match database format (YYYY-MM-DD)
+    const eventDate = new Date(date).toISOString().split('T')[0]
+
+    // Check if match already exists for this date and opponent
+    const { data: existing, error: checkError } = await req.supabase
+      .from('matches')
+      .select('id')
+      .ilike('opponent', opponent)
+      .gte('date', `${eventDate}T00:00:00`)
+      .lt('date', `${eventDate}T23:59:59`)
+      .single()
+
+    if (existing) {
+      // Match already exists - return it without creating duplicate
+      return res.json({ 
+        message: 'Match already exists (duplicate prevented)', 
+        id: existing.id,
+        isDuplicate: true 
+      })
+    }
+
+    // Create new match
+    const { data, error } = await req.supabase
+      .from('matches')
+      .insert([{
+        date: new Date(date).toISOString(),
+        opponent: opponent,
+        location: location || 'TBD',
+        notes: notes || null,
+        is_official_match: is_official_match || false
+      }])
+      .select()
+
+    if (error) throw error
+
+    res.json({ 
+      message: 'Match created',
+      data: data[0],
+      isDuplicate: false
+    })
   } catch (error) {
     res.status(500).json({ error: error.message })
   }

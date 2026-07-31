@@ -59,8 +59,8 @@ export default function AdminPanel({ currentUser, onLogout }) {
       
       // If marking as match and not already marked, create a match entry
       if (newIsMatch && !isMatch) {
-        // Create match from calendar event
-        await apiClient.post('/api/matches', {
+        // Create match from calendar event (with duplicate prevention)
+        await apiClient.post('/api/matches/create-or-skip', {
           date: eventDate,
           opponent: eventTitle,
           location: 'TBD',

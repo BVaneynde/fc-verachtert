@@ -4,29 +4,53 @@ import { Link } from 'react-router-dom'
 
 export default function Statistics() {
   const [stats, setStats] = useState([])
+  const [matches, setMatches] = useState([])
   const [sortBy, setSortBy] = useState('goals')
+  const [selectedSeason, setSelectedSeason] = useState('current')
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetchStatistics()
+    fetchData()
   }, [])
 
-  const fetchStatistics = async () => {
+  const fetchData = async () => {
     try {
       setLoading(true)
-      // TODO: Replace with actual API call
-      const res = await apiClient.get('/api/players/stats')
-      setStats(res.data)
+      const statsRes = await apiClient.get('/api/players/stats')
+      const matchesRes = await apiClient.get('/api/matches')
+      setStats(statsRes.data)
+      setMatches(matchesRes.data)
     } catch (error) {
-      console.error('Error fetching statistics:', error)
+      console.error('Error fetching data:', error)
     } finally {
       setLoading(false)
     }
   }
 
-  const sortedStats = [...stats].sort((a, b) => {
+  // Calculate seasons based on August-July
+  const getSeasonYear = (date) => {
+    const d = new Date(date)
+    return d.getMonth() >= 7 ? d.getFullYear() : d.getFullYear() - 1
+  }
+
+  // Get available seasons from matches
+  const seasons = Array.from(new Set(matches.map(m => getSeasonYear(m.date))))
+    .sort((a, b) => b - a)
+  
+  const currentSeason = getSeasonYear(new Date())
+  
+  // Filter stats by season
+  const filteredStats = stats.filter(player => {
+    if (selectedSeason === 'current') {
+      return player.season === currentSeason
+    }
+    return player.season === parseInt(selectedSeason)
+  })
+
+  const sortedStats = [...filteredStats].sort((a, b) => {
     if (sortBy === 'goals') return b.goals - a.goals
-    if (sortBy === 'cards') return b.yellow_cards - a.yellow_cards
+    if (sortBy === 'yellow') return b.yellow_cards - a.yellow_cards
+    if (sortBy === 'red') return b.red_cards - a.red_cards
     if (sortBy === 'matches') return b.appearances - a.appearances
     return 0
   })
@@ -45,15 +69,62 @@ export default function Statistics() {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 py-8">
+        {/* Season Filter */}
+        <div className="bg-white rounded-lg shadow-md p-4 mb-6">
+          <p className="text-gray-700 font-semibold mb-3">Seizoen:</p>
+          <div className="flex gap-3 flex-wrap">
+            <button
+              onClick={() => setSelectedSeason('current')}
+              className={`px-4 py-2 rounded transition font-semibold ${
+                selectedSeason === 'current'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              🏆 Huidig seizoen ({currentSeason}/{currentSeason + 1})
+            </button>
+            {seasons.map(season => (
+              season !== currentSeason && (
+                <button
+                  key={season}
+                  onClick={() => setSelectedSeason(season.toString())}
+                  className={`px-4 py-2 rounded transition font-semibold ${
+                    selectedSeason === season.toString()
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }`}
+                >
+                  {season}/{season + 1}
+                </button>
+              )
+            ))}
+          </div>
+        </div>
+
         {/* Sort Buttons */}
         <div className="bg-white rounded-lg shadow-md p-4 mb-6">
           <p className="text-gray-700 font-semibold mb-3">Sorteren op:</p>
           <div className="flex gap-3 flex-wrap">
             {[
               { value: 'goals', label: '⚽ Doelpunten' },
-              { value: 'cards', label: '🟨 Gele kaarten' },
+              { value: 'yellow', label: '🟨 Gele kaarten' },
+              { value: 'red', label: '🔴 Rode kaarten' },
               { value: 'matches', label: '🎮 Aantal matchen' }
             ].map(option => (
+              <button
+                key={option.value}
+                onClick={() => setSortBy(option.value)}
+                className={`px-4 py-2 rounded transition ${
+                  sortBy === option.value
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        </div>
               <button
                 key={option.value}
                 onClick={() => setSortBy(option.value)}
@@ -81,7 +152,8 @@ export default function Statistics() {
                     <th className="text-left px-6 py-4 text-gray-700 font-semibold">#</th>
                     <th className="text-left px-6 py-4 text-gray-700 font-semibold">Speler</th>
                     <th className="text-center px-6 py-4 text-gray-700 font-semibold">⚽ Doelpunten</th>
-                    <th className="text-center px-6 py-4 text-gray-700 font-semibold">🟨 Kaarten</th>
+                    <th className="text-center px-6 py-4 text-gray-700 font-semibold">🟨 Gele kaarten</th>
+                    <th className="text-center px-6 py-4 text-gray-700 font-semibold">🔴 Rode kaarten</th>
                     <th className="text-center px-6 py-4 text-gray-700 font-semibold">🎮 Matchen</th>
                   </tr>
                 </thead>
@@ -96,8 +168,15 @@ export default function Statistics() {
                       <td className="text-center px-6 py-4 text-lg font-bold text-yellow-500">
                         {player.yellow_cards}
                       </td>
+                      <td className="text-center px-6 py-4 text-lg font-bold text-red-600">
+                        {player.red_cards || 0}
+                      </td>
                       <td className="text-center px-6 py-4 text-lg font-bold text-blue-600">
                         {player.appearances}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
                       </td>
                     </tr>
                   ))}

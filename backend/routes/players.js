@@ -22,6 +22,12 @@ router.get('/', async (req, res) => {
 // GET /api/players/stats - Get player statistics (goals, cards, appearances)
 router.get('/stats', async (req, res) => {
   try {
+    // Helper function to calculate season (August = start year)
+    const getSeason = (dateString) => {
+      const date = new Date(dateString)
+      return date.getMonth() >= 7 ? date.getFullYear() : date.getFullYear() - 1
+    }
+
     // Get all players with aggregated stats
     const { data: players, error: playersError } = await req.supabase
       .from('players')
@@ -30,8 +36,21 @@ router.get('/stats', async (req, res) => {
 
     if (playersError) throw playersError
 
-    // For each player, get stats
-    const stats = await Promise.all(
+    // Get all matches to calculate seasons
+    const { data: matches, error: matchError } = await req.supabase
+      .from('matches')
+      .select('id, date')
+
+    if (matchError) throw matchError
+
+    // Build a map of match_id -> season
+    const matchSeasons = {}
+    matches.forEach(match => {
+      matchSeasons[match.id] = getSeason(match.date)
+    })
+
+    // For each player, get stats organized by season
+    const statsData = await Promise.all(
       players.map(async (player) => {
         const { data: appearances, error } = await req.supabase
           .from('match_appearances')
@@ -46,29 +65,47 @@ router.get('/stats', async (req, res) => {
 
         if (error) {
           console.error(`Error fetching stats for ${player.name}:`, error)
-          return {
-            player_id: player.id,
-            player_name: player.name,
-            appearances: 0,
-            goals: 0,
-            yellow_cards: 0,
-            red_cards: 0
-          }
+          return []
         }
 
-        const presentAppearances = appearances.filter(a => a.was_present)
-        return {
-          player_id: player.id,
-          player_name: player.name,
-          appearances: new Set(presentAppearances.map(a => a.match_id)).size,
-          goals: appearances.reduce((sum, a) => sum + (a.goals || 0), 0),
-          yellow_cards: appearances.reduce((sum, a) => sum + (a.yellow_cards || 0), 0),
-          red_cards: appearances.reduce((sum, a) => sum + (a.red_cards || 0), 0)
-        }
+        // Group stats by season
+        const statsBySeason = {}
+        
+        appearances.forEach(a => {
+          const season = matchSeasons[a.match_id]
+          if (!season) return
+          
+          if (!statsBySeason[season]) {
+            statsBySeason[season] = {
+              player_id: player.id,
+              player_name: player.name,
+              season: season,
+              appearances: new Set(),
+              goals: 0,
+              yellow_cards: 0,
+              red_cards: 0
+            }
+          }
+          
+          if (a.was_present) {
+            statsBySeason[season].appearances.add(a.match_id)
+          }
+          statsBySeason[season].goals += a.goals || 0
+          statsBySeason[season].yellow_cards += a.yellow_cards || 0
+          statsBySeason[season].red_cards += a.red_cards || 0
+        })
+
+        // Convert sets to numbers and return array
+        return Object.values(statsBySeason).map(s => ({
+          ...s,
+          appearances: s.appearances.size
+        }))
       })
     )
 
-    res.json(stats)
+    // Flatten array and return
+    const allStats = statsData.flat()
+    res.json(allStats)
   } catch (error) {
     res.status(500).json({ error: error.message })
   }

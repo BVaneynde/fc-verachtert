@@ -36,12 +36,13 @@ In Railway dashboard, ga naar "Variables":
 ```
 BACKEND_PORT=5000
 NODE_ENV=production
-SUPABASE_URL=https://kfiojvijdzwmvywxchsi.supabase.co
-SUPABASE_ANON_KEY=sb_publishable_0h9xYceJo9GNqxnHwre50Q_bPFDZDXB
-SUPABASE_SERVICE_ROLE_KEY=sb_secret_gEKTrzj9le27mSeVpA1DPA_z0WkBaGe
-JWT_SECRET=afa323b4d91da25091148fc16bcbd214d17948811d420d0e5bec6526f6db17b1
+SUPABASE_URL=<your_supabase_url>
+SUPABASE_ANON_KEY=<your_anon_key>
+SUPABASE_SERVICE_ROLE_KEY=<your_service_role_key>
+JWT_SECRET=<your_jwt_secret>
 GOOGLE_CALENDAR_URL=https://calendar.google.com/calendar/ical/fcverachtert%40gmail.com/public/basic.ics
 ```
+**⚠️ Kopieër je .env bestand voor de waarden!**
 
 ### 2.3 Deploy
 - Railway deployed automatisch
@@ -56,10 +57,11 @@ GOOGLE_CALENDAR_URL=https://calendar.google.com/calendar/ical/fcverachtert%40gma
 Bewerk `.env` file:
 ```
 VITE_BACKEND_URL=https://[railway-backend-url]  # Vervang met je Railway URL
-VITE_SUPABASE_URL=https://kfiojvijdzwmvywxchsi.supabase.co
-VITE_SUPABASE_ANON_KEY=sb_publishable_0h9xYceJo9GNqxnHwre50Q_bPFDZDXB
+VITE_SUPABASE_URL=<your_supabase_url>
+VITE_SUPABASE_ANON_KEY=<your_anon_key>
 GOOGLE_CALENDAR_URL=https://calendar.google.com/calendar/ical/fcverachtert%40gmail.com/public/basic.ics
 ```
+**⚠️ Kopieër je .env bestand voor de waarden!**
 
 ### 3.2 Push naar GitHub
 ```powershell

@@ -61,7 +61,7 @@ export default function Statistics() {
     const isSameSeason = selectedSeason === 'current' 
       ? matchSeason === currentSeason 
       : matchSeason === parseInt(selectedSeason)
-    return isSameSeason && new Date(m.date) < new Date()
+    return isSameSeason && new Date(m.date) < new Date() && m.is_official_match === true
   }).length
 
   return (

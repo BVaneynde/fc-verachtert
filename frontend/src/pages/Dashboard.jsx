@@ -28,14 +28,17 @@ export default function Dashboard({ isAuthenticated, currentUser }) {
       // Deduplicate matches by ID
       const uniqueMatches = Array.from(new Map(matchesRes.data.map(m => [m.id, m])).values())
       
+      // Filter: only include official matches (marked as wedstrijd/match in admin)
+      const officialMatches = uniqueMatches.filter(m => m.is_official_match === true)
+      
       // Get upcoming matches, sort by date (earliest first), take 3
-      const upcoming = uniqueMatches
+      const upcoming = officialMatches
         .filter(m => new Date(m.date) > now)
         .sort((a, b) => new Date(a.date) - new Date(b.date))
         .slice(0, 3)
       
       // Get recent matches, sort by date (latest first), take 1
-      const recent = uniqueMatches
+      const recent = officialMatches
         .filter(m => new Date(m.date) <= now)
         .sort((a, b) => new Date(b.date) - new Date(a.date))
         .slice(0, 1)

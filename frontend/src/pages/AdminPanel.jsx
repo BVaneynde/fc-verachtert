@@ -69,18 +69,16 @@ export default function AdminPanel({ currentUser, onLogout }) {
         })
       }
       
-      // If unmarking as match, delete any match entries for this event
+      // If unmarking as match, mark match as unofficial (not delete it)
       if (!newIsMatch && isMatch) {
-        // Find and delete match with same date and opponent
+        // Find and mark match as unofficial for this event
         try {
-          await apiClient.delete('/api/matches/by-event', {
-            data: { 
-              event_date: eventDate, 
-              opponent: eventTitle 
-            }
+          await apiClient.put('/api/matches/mark-unofficial-by-event', {
+            event_date: eventDate, 
+            opponent: eventTitle 
           })
         } catch (err) {
-          console.log('Match may already be deleted:', err)
+          console.log('Match update failed:', err)
         }
       }
       

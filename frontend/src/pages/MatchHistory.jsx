@@ -19,11 +19,13 @@ export default function MatchHistory({ isAuthenticated, currentUser }) {
       setLoading(true)
       const res = await apiClient.get('/api/matches')
       
-      // Filter only past matches for display
+      // Filter only past matches AND official matches (wedstrijden)
       const now = new Date()
-      const pastMatches = res.data.filter(m => new Date(m.date) < now)
+      const pastMatches = res.data.filter(m => 
+        new Date(m.date) < now && m.is_official_match === true
+      )
       
-      // Total matches (only past matches count)
+      // Total matches (only past official matches count)
       setTotalMatches(pastMatches.length)
       setMatches(pastMatches)
     } catch (error) {

@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
   }
 })
 
-// GET /api/matches/head-to-head/all - Get head-to-head stats against opponents (ONLY PAST MATCHES)
+// GET /api/matches/head-to-head/all - Get head-to-head stats against opponents (ONLY PAST OFFICIAL MATCHES)
 router.get('/head-to-head/all', async (req, res) => {
   try {
     const now = new Date()
@@ -27,6 +27,7 @@ router.get('/head-to-head/all', async (req, res) => {
       .from('matches')
       .select('id, opponent, date, score_home, score_away')
       .lte('date', now.toISOString())  // Only past matches
+      .eq('is_official_match', true)    // Only official matches (wedstrijden)
       .order('date', { ascending: false })
 
     if (error) throw error
@@ -297,5 +298,6 @@ router.delete('/by-event', async (req, res) => {
     res.status(500).json({ error: error.message })
   }
 })
+
 
 export default router

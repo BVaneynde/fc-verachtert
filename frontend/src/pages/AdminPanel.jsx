@@ -54,10 +54,10 @@ export default function AdminPanel({ currentUser, onLogout }) {
     try {
       const newIsMatch = !isMatch
       
-      // Update the event
+      // Update the calendar event
       await apiClient.put(`/api/calendar/${eventId}/mark-as-match`, { is_match: newIsMatch })
       
-      // If marking as match and not already marked, create a match entry
+      // If marking as match, create/mark match as official
       if (newIsMatch && !isMatch) {
         // Create match from calendar event (with duplicate prevention)
         await apiClient.post('/api/matches/create-or-skip', {
@@ -67,19 +67,21 @@ export default function AdminPanel({ currentUser, onLogout }) {
           notes: 'Uit Google Calendar',
           is_official_match: true
         })
+        
+        // Also mark any existing match as official
+        await apiClient.put('/api/matches/mark-official-by-event', {
+          event_date: eventDate, 
+          opponent: eventTitle 
+        })
       }
       
-      // If unmarking as match, mark match as unofficial (not delete it)
+      // If unmarking as match, mark match as unofficial
       if (!newIsMatch && isMatch) {
-        // Find and mark match as unofficial for this event
-        try {
-          await apiClient.put('/api/matches/mark-unofficial-by-event', {
-            event_date: eventDate, 
-            opponent: eventTitle 
-          })
-        } catch (err) {
-          console.log('Match update failed:', err)
-        }
+        // Mark match as unofficial
+        await apiClient.put('/api/matches/mark-unofficial-by-event', {
+          event_date: eventDate, 
+          opponent: eventTitle 
+        })
       }
       
       alert(`✅ Event ${newIsMatch ? 'als wedstrijd gemarkeerd' : 'uit wedstrijdlijst verwijderd'}`)

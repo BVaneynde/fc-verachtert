@@ -299,5 +299,78 @@ router.delete('/by-event', async (req, res) => {
   }
 })
 
+// PUT /api/matches/mark-unofficial-by-event - Mark matches as unofficial by event date and opponent
+router.put('/mark-unofficial-by-event', async (req, res) => {
+  try {
+    const { event_date, opponent } = req.body
+
+    if (!event_date || !opponent) {
+      return res.status(400).json({ error: 'Missing event_date or opponent' })
+    }
+
+    // Parse the event_date to match database format (YYYY-MM-DD)
+    const eventDate = new Date(event_date).toISOString().split('T')[0]
+
+    console.log(`Marking as unofficial: ${opponent} on ${eventDate}`)
+
+    const { data, error } = await req.supabase
+      .from('matches')
+      .update({ is_official_match: false })
+      .ilike('opponent', opponent)
+      .gte('date', `${eventDate}T00:00:00`)
+      .lt('date', `${eventDate}T23:59:59`)
+      .select()
+
+    if (error) throw error
+
+    console.log(`Updated ${data.length} matches`)
+
+    res.json({ 
+      message: `Marked ${data.length} match(es) as unofficial`, 
+      count: data.length,
+      data: data
+    })
+  } catch (error) {
+    console.error('Error in mark-unofficial-by-event:', error)
+    res.status(500).json({ error: error.message })
+  }
+})
+
+// PUT /api/matches/mark-official-by-event - Mark matches as official by event date and opponent
+router.put('/mark-official-by-event', async (req, res) => {
+  try {
+    const { event_date, opponent } = req.body
+
+    if (!event_date || !opponent) {
+      return res.status(400).json({ error: 'Missing event_date or opponent' })
+    }
+
+    // Parse the event_date to match database format (YYYY-MM-DD)
+    const eventDate = new Date(event_date).toISOString().split('T')[0]
+
+    console.log(`Marking as official: ${opponent} on ${eventDate}`)
+
+    const { data, error } = await req.supabase
+      .from('matches')
+      .update({ is_official_match: true })
+      .ilike('opponent', opponent)
+      .gte('date', `${eventDate}T00:00:00`)
+      .lt('date', `${eventDate}T23:59:59`)
+      .select()
+
+    if (error) throw error
+
+    console.log(`Updated ${data.length} matches`)
+
+    res.json({ 
+      message: `Marked ${data.length} match(es) as official`, 
+      count: data.length,
+      data: data
+    })
+  } catch (error) {
+    console.error('Error in mark-official-by-event:', error)
+    res.status(500).json({ error: error.message })
+  }
+})
 
 export default router

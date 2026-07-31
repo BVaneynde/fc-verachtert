@@ -11,6 +11,9 @@ export default function Dashboard({ isAuthenticated, currentUser }) {
 
   useEffect(() => {
     fetchDashboardData()
+    // Refresh data every 30 seconds
+    const interval = setInterval(fetchDashboardData, 30000)
+    return () => clearInterval(interval)
   }, [])
 
   const fetchDashboardData = async () => {
@@ -21,10 +24,21 @@ export default function Dashboard({ isAuthenticated, currentUser }) {
       
       // Separate upcoming and recent
       const now = new Date()
-      // Only show 3 upcoming matches
-      setUpcomingMatches(matchesRes.data.filter(m => new Date(m.date) > now).slice(0, 3))
-      // Only show 1 recent match
-      setRecentMatches(matchesRes.data.filter(m => new Date(m.date) <= now).slice(0, 1))
+      
+      // Get upcoming matches, sort by date (earliest first), take 3
+      const upcoming = matchesRes.data
+        .filter(m => new Date(m.date) > now)
+        .sort((a, b) => new Date(a.date) - new Date(b.date))
+        .slice(0, 3)
+      
+      // Get recent matches, sort by date (latest first), take 1
+      const recent = matchesRes.data
+        .filter(m => new Date(m.date) <= now)
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .slice(0, 1)
+      
+      setUpcomingMatches(upcoming)
+      setRecentMatches(recent)
       setTopScorers(statsRes.data.sort((a, b) => b.goals - a.goals).slice(0, 5))
     } catch (error) {
       console.error('Error fetching dashboard:', error)
@@ -44,6 +58,13 @@ export default function Dashboard({ isAuthenticated, currentUser }) {
               <p className="text-red-100 text-sm mt-1">FC Verachtert Dashboard</p>
             </div>
             <nav className="flex flex-wrap gap-2 md:gap-4 items-center">
+              <button
+                onClick={fetchDashboardData}
+                className="text-white hover:text-red-100 font-semibold transition text-sm md:text-base p-2 hover:bg-white/10 rounded-lg"
+                title="Vernieuw gegevens"
+              >
+                🔄 Vernieuwen
+              </button>
               <Link to="/statistics" className="text-white hover:text-red-100 font-semibold transition text-sm md:text-base">
                 📊 Stats
               </Link>

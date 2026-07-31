@@ -1,53 +1,30 @@
-# Git Repository for FC Verachtert Wedstrijdtracker
+# Environment variables
+.env
+.env.local
+.env.*.local
 
-## Installation & Setup
+# Node modules
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-1. Install dependencies:
-```bash
-cd backend && npm install
-cd ../frontend && npm install
-```
+# Build outputs
+dist/
+build/
 
-2. Create `.env` file from `.env.example`:
-```bash
-cp .env.example .env
-```
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
 
-3. Configure environment variables:
-- Add Supabase URL and API key
-- Add Google Calendar iCal URL
-- Generate JWT_SECRET
+# OS
+.DS_Store
+Thumbs.db
 
-4. Set up Supabase database:
-- Create free account at supabase.com
-- Run SQL schema: `backend/db/schema.sql`
-
-5. Start development servers:
-```bash
-# Terminal 1 - Backend
-cd backend && npm run dev
-
-# Terminal 2 - Frontend  
-cd frontend && npm run dev
-```
-
-## Project Structure
-
-### Backend (`/backend`)
-- `server.js` - Express app entry point
-- `routes/` - API endpoints (matches, players, calendar, auth)
-- `middleware/` - Authentication & authorization
-- `db/` - Database schema and migrations
-- `.env.example` - Environment variables template
-
-### Frontend (`/frontend`)
-- `src/pages/` - Page components (Dashboard, Login, AdminPanel, etc)
-- `src/utils/` - Helper functions
-- `index.html` - HTML entry point
-- `vite.config.js` - Vite config
-- `tailwind.config.js` - Tailwind CSS config
-
-## API Endpoints
+# Git filter-branch temp files
+.git-rewrite/
 
 ### Auth
 - `POST /api/auth/register` - Create admin account

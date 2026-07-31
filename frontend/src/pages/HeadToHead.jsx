@@ -31,35 +31,39 @@ export default function HeadToHead() {
   })
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Header */}
-      <header className="bg-fcred shadow-lg sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-          <Link to="/" className="text-white hover:text-red-100 text-lg font-semibold transition">
-            ← Terug naar home
-          </Link>
-          <h1 className="text-2xl font-bold text-white">🏆 Head-to-Head Statistieken</h1>
-          <div></div>
+      <header className="bg-gradient-to-r from-fcred to-fcrefdark shadow-2xl sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-4 py-6">
+          <div className="flex items-center gap-4">
+            <Link to="/" className="text-white hover:text-red-100 text-lg font-semibold transition">
+              ← Terug
+            </Link>
+            <div>
+              <h1 className="text-3xl md:text-4xl font-black text-white">🏆 Head-to-Head</h1>
+              <p className="text-red-100 text-sm mt-1">Statistieken tegen tegenstanders</p>
+            </div>
+          </div>
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 py-8">
-        {/* Sort Buttons */}
-        <div className="bg-white rounded-lg shadow-md p-4 mb-6">
-          <p className="text-gray-700 font-semibold mb-3">Sorteren op:</p>
+      <main className="max-w-7xl mx-auto px-4 py-8">
+        {/* Sort Controls */}
+        <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
+          <p className="text-gray-900 font-black text-lg mb-4">Sorteren op:</p>
           <div className="flex gap-3 flex-wrap">
             {[
-              { value: 'played', label: '🎮 Aantal matchen' },
-              { value: 'won', label: '🏅 Gewonnen' },
-              { value: 'goals', label: '⚽ Doelpunten voor' }
+              { value: 'played', label: '🎮 Matchen' },
+              { value: 'won', label: '🏅 Wins' },
+              { value: 'goals', label: '⚽ Doelpunten' }
             ].map(option => (
               <button
                 key={option.value}
                 onClick={() => setSortBy(option.value)}
-                className={`px-4 py-2 rounded transition font-semibold ${
+                className={`px-4 py-2 rounded-lg transition font-bold ${
                   sortBy === option.value
-                    ? 'bg-fcred text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    ? 'bg-fcred text-white shadow-md'
+                    : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
                 }`}
               >
                 {option.label}
@@ -69,77 +73,63 @@ export default function HeadToHead() {
         </div>
 
         {/* Head-to-Head Table */}
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden border-t-4 border-fcred">
           {loading ? (
-            <div className="p-8 text-center text-gray-500">Laden...</div>
+            <div className="p-12 text-center text-gray-500">⏳ Laden...</div>
           ) : sortedStats.length > 0 ? (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-100">
+                <thead className="bg-gradient-to-r from-gray-100 to-gray-50">
                   <tr>
-                    <th className="text-left px-6 py-4 text-gray-700 font-semibold">Tegenstander</th>
-                    <th className="text-center px-6 py-4 text-gray-700 font-semibold">🎮 Matchen</th>
-                    <th className="text-center px-6 py-4 text-gray-700 font-semibold">🏅 Gewonnen</th>
-                    <th className="text-center px-6 py-4 text-gray-700 font-semibold">🤝 Gelijkspel</th>
-                    <th className="text-center px-6 py-4 text-gray-700 font-semibold">❌ Verloren</th>
-                    <th className="text-center px-6 py-4 text-gray-700 font-semibold">⚽ Voor/Tegen</th>
-                    <th className="text-center px-6 py-4 text-gray-700 font-semibold">📅 Laatste match</th>
+                    <th className="text-left px-4 md:px-6 py-4 text-gray-900 font-black">Tegenstander</th>
+                    <th className="text-center px-3 md:px-6 py-4 text-gray-900 font-black text-sm md:text-base">🎮</th>
+                    <th className="text-center px-3 md:px-6 py-4 text-gray-900 font-black text-sm md:text-base">🏅</th>
+                    <th className="text-center px-3 md:px-6 py-4 text-gray-900 font-black text-sm md:text-base">🤝</th>
+                    <th className="text-center px-3 md:px-6 py-4 text-gray-900 font-black text-sm md:text-base">❌</th>
+                    <th className="text-center px-3 md:px-6 py-4 text-gray-900 font-black text-sm md:text-base">⚽</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {sortedStats.map((opponent, idx) => (
-                    <tr key={opponent.opponent} className="border-b hover:bg-gray-50 transition">
-                      <td className="px-6 py-4 font-semibold text-gray-800">{opponent.opponent}</td>
-                      <td className="text-center px-6 py-4 font-bold text-blue-600">
-                        {opponent.played}
-                      </td>
-                      <td className="text-center px-6 py-4 font-bold text-green-600">
-                        {opponent.won}
-                      </td>
-                      <td className="text-center px-6 py-4 font-bold text-yellow-600">
-                        {opponent.drawn}
-                      </td>
-                      <td className="text-center px-6 py-4 font-bold text-red-600">
-                        {opponent.lost}
-                      </td>
-                      <td className="text-center px-6 py-4 font-bold text-fcred">
-                        {opponent.goals_for} - {opponent.goals_against}
-                      </td>
-                      <td className="text-center px-6 py-4 text-sm text-gray-600">
-                        {opponent.last_match ? new Date(opponent.last_match).toLocaleDateString('nl-NL') : 'N/A'}
-                      </td>
+                  {sortedStats.map((opponent) => (
+                    <tr key={opponent.opponent} className="border-b border-gray-100 hover:bg-red-50 transition">
+                      <td className="px-4 md:px-6 py-4 font-bold text-gray-900 text-sm md:text-base">{opponent.opponent}</td>
+                      <td className="text-center px-3 md:px-6 py-4 font-bold text-blue-600">{opponent.played}</td>
+                      <td className="text-center px-3 md:px-6 py-4 font-bold text-green-600">{opponent.won}</td>
+                      <td className="text-center px-3 md:px-6 py-4 font-bold text-yellow-600">{opponent.drawn}</td>
+                      <td className="text-center px-3 md:px-6 py-4 font-bold text-red-600">{opponent.lost}</td>
+                      <td className="text-center px-3 md:px-6 py-4 font-bold text-fcred">{opponent.goals_for}-{opponent.goals_against}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
           ) : (
-            <div className="p-8 text-center text-gray-500">Geen head-to-head data beschikbaar</div>
+            <div className="p-12 text-center text-gray-500">📭 Geen data beschikbaar (toekomstige matchen tellen niet mee)</div>
           )}
         </div>
 
         {/* Stats Summary */}
         {sortedStats.length > 0 && (
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <p className="text-gray-600 text-sm font-semibold mb-2">TOTAAL TEGENSTANDERS</p>
-              <p className="text-3xl font-bold text-gray-800">{sortedStats.length}</p>
+          <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="bg-white rounded-xl shadow-lg p-6 border-t-4 border-fcred hover:shadow-xl transition">
+              <p className="text-gray-600 text-xs font-bold mb-2">TEGENSTANDERS</p>
+              <p className="text-3xl md:text-4xl font-black text-fcred">{sortedStats.length}</p>
             </div>
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <p className="text-gray-600 text-sm font-semibold mb-2">TOTAAL MATCHEN</p>
-              <p className="text-3xl font-bold text-gray-800">
+            <div className="bg-white rounded-xl shadow-lg p-6 border-t-4 border-blue-500 hover:shadow-xl transition">
+              <p className="text-gray-600 text-xs font-bold mb-2">TOTAAL MATCHEN</p>
+              <p className="text-3xl md:text-4xl font-black text-blue-600">
                 {sortedStats.reduce((sum, o) => sum + o.played, 0)}
               </p>
             </div>
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <p className="text-gray-600 text-sm font-semibold mb-2">TOTAAL GEWONNEN</p>
-              <p className="text-3xl font-bold text-green-600">
+            <div className="bg-white rounded-xl shadow-lg p-6 border-t-4 border-green-500 hover:shadow-xl transition">
+              <p className="text-gray-600 text-xs font-bold mb-2">GEWONNEN</p>
+              <p className="text-3xl md:text-4xl font-black text-green-600">
                 {sortedStats.reduce((sum, o) => sum + o.won, 0)}
               </p>
             </div>
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <p className="text-gray-600 text-sm font-semibold mb-2">TOTAAL DOELPUNTEN</p>
-              <p className="text-3xl font-bold text-fcred">
+            <div className="bg-white rounded-xl shadow-lg p-6 border-t-4 border-yellow-500 hover:shadow-xl transition">
+              <p className="text-gray-600 text-xs font-bold mb-2">DOELPUNTEN VOOR</p>
+              <p className="text-3xl md:text-4xl font-black text-fcred">
                 {sortedStats.reduce((sum, o) => sum + o.goals_for, 0)}
               </p>
             </div>

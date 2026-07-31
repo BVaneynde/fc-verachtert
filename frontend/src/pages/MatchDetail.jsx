@@ -140,7 +140,7 @@ export default function MatchDetail({ isAuthenticated, currentUser }) {
         <div className="bg-white rounded-lg shadow-md p-8 mb-8">
           <div className="flex justify-between items-center">
             <div className="text-center flex-1">
-              <p className="text-gray-600 mb-2">FC Verachtert</p>
+              <p className="text-gray-600 mb-2 font-bold">FCV</p>
               {isEditing ? (
                 <input
                   type="number"

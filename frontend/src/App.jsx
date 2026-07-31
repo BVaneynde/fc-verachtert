@@ -3,6 +3,7 @@ import Dashboard from './pages/Dashboard'
 import MatchDetail from './pages/MatchDetail'
 import Statistics from './pages/Statistics'
 import HeadToHead from './pages/HeadToHead'
+import MatchHistory from './pages/MatchHistory'
 import AdminPanel from './pages/AdminPanel'
 import Login from './pages/Login'
 import { useEffect, useState } from 'react'
@@ -48,6 +49,7 @@ function App() {
         <Route path="/match/:id" element={<MatchDetail isAuthenticated={isAuthenticated} currentUser={currentUser} />} />
         <Route path="/statistics" element={<Statistics />} />
         <Route path="/head-to-head" element={<HeadToHead />} />
+        <Route path="/match-history" element={<MatchHistory isAuthenticated={isAuthenticated} currentUser={currentUser} />} />
         {isAuthenticated && currentUser?.role === 'admin' && (
           <Route path="/admin" element={<AdminPanel currentUser={currentUser} onLogout={handleLogout} />} />
         )}

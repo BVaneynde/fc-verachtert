@@ -18,12 +18,15 @@ router.get('/', async (req, res) => {
   }
 })
 
-// GET /api/matches/head-to-head - Get head-to-head stats against opponents
+// GET /api/matches/head-to-head/all - Get head-to-head stats against opponents (ONLY PAST MATCHES)
 router.get('/head-to-head/all', async (req, res) => {
   try {
+    const now = new Date()
+    
     const { data: matches, error } = await req.supabase
       .from('matches')
       .select('id, opponent, date, score_home, score_away')
+      .lte('date', now.toISOString())  // Only past matches
       .order('date', { ascending: false })
 
     if (error) throw error

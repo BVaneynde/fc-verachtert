@@ -23,8 +23,8 @@ export default function MatchHistory({ isAuthenticated, currentUser }) {
       const now = new Date()
       const pastMatches = res.data.filter(m => new Date(m.date) < now)
       
-      // Total matches (all seasons matches)
-      setTotalMatches(res.data.length)
+      // Total matches (only past matches count)
+      setTotalMatches(pastMatches.length)
       setMatches(pastMatches)
     } catch (error) {
       console.error('Error fetching matches:', error)

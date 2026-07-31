@@ -58,12 +58,12 @@ export default function Statistics() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-10">
+      <header className="bg-fcred shadow-lg sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-          <Link to="/" className="text-blue-600 hover:text-blue-800 text-lg">
+          <Link to="/" className="text-white hover:text-red-100 text-lg font-semibold transition">
             ← Terug naar home
           </Link>
-          <h1 className="text-2xl font-bold text-gray-800">📊 Seizoen Statistieken</h1>
+          <h1 className="text-2xl font-bold text-white">📊 Seizoen Statistieken</h1>
           <div></div>
         </div>
       </header>
@@ -77,7 +77,7 @@ export default function Statistics() {
               onClick={() => setSelectedSeason('current')}
               className={`px-4 py-2 rounded transition font-semibold ${
                 selectedSeason === 'current'
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-fcred text-white'
                   : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
               }`}
             >
@@ -90,7 +90,7 @@ export default function Statistics() {
                   onClick={() => setSelectedSeason(season.toString())}
                   className={`px-4 py-2 rounded transition font-semibold ${
                     selectedSeason === season.toString()
-                      ? 'bg-blue-600 text-white'
+                      ? 'bg-fcred text-white'
                       : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                   }`}
                 >
@@ -116,7 +116,7 @@ export default function Statistics() {
                 onClick={() => setSortBy(option.value)}
                 className={`px-4 py-2 rounded transition ${
                   sortBy === option.value
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-fcred text-white'
                     : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                 }`}
               >

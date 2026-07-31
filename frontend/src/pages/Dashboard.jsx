@@ -32,22 +32,22 @@ export default function Dashboard({ isAuthenticated, currentUser }) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-red-50 to-white">
       {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-10">
+      <header className="bg-fcred shadow-lg sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-blue-600">⚽ FC Verachtert</h1>
-          <nav className="flex gap-4 items-center">
-            <Link to="/statistics" className="text-gray-600 hover:text-blue-600">
+          <h1 className="text-3xl font-bold text-white">⚽ FC Verachtert</h1>
+          <nav className="flex gap-6 items-center">
+            <Link to="/statistics" className="text-white hover:text-red-100 font-semibold transition">
               📊 Statistieken
             </Link>
             {isAuthenticated && currentUser?.role === 'admin' && (
-              <Link to="/admin" className="text-gray-600 hover:text-blue-600">
+              <Link to="/admin" className="text-white hover:text-red-100 font-semibold transition">
                 ⚙️ Admin
               </Link>
             )}
             {!isAuthenticated && (
-              <Link to="/login" className="bg-blue-600 text-white px-4 py-2 rounded">
+              <Link to="/login" className="bg-white text-fcred px-4 py-2 rounded font-semibold hover:bg-red-50 transition">
                 Login
               </Link>
             )}

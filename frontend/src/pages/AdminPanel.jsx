@@ -99,28 +99,28 @@ export default function AdminPanel({ currentUser, onLogout }) {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-blue-600 shadow-lg sticky top-0 z-10">
+      <header className="bg-fcred shadow-lg sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-4">
             <button
               onClick={() => navigate('/')}
-              className="text-white hover:text-blue-100 text-lg"
+              className="text-white hover:text-red-100 text-lg font-semibold transition"
             >
               ← Terug naar Dashboard
             </button>
             <div>
               <h1 className="text-2xl font-bold text-white">⚙️ Admin Panel</h1>
-              <p className="text-blue-100 text-sm">FC Verachtert Beheer</p>
+              <p className="text-red-100 text-sm">FC Verachtert Beheer</p>
             </div>
           </div>
           <div className="flex items-center gap-4">
             <div className="text-right">
               <p className="text-white font-semibold">{currentUser?.email}</p>
-              <p className="text-blue-100 text-sm">Admin</p>
+              <p className="text-red-100 text-sm">Admin</p>
             </div>
             <button
               onClick={handleLogout}
-              className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-semibold shadow-md"
+              className="px-6 py-2 bg-white text-fcred rounded-lg hover:bg-red-50 transition font-semibold shadow-md"
             >
               🚪 Logout
             </button>
@@ -160,12 +160,12 @@ export default function AdminPanel({ currentUser, onLogout }) {
                     type="text"
                     value={newPlayerName}
                     onChange={(e) => setNewPlayerName(e.target.value)}
-                    className="flex-1 px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-600"
+                    className="flex-1 px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-fcred"
                     placeholder="Voer spelernaam in"
                   />
                   <button
                     type="submit"
-                    className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+                    className="px-6 py-2 bg-fcred text-white rounded hover:bg-fcrefdark transition font-semibold"
                   >
                     Toevoegen
                   </button>
@@ -210,7 +210,7 @@ export default function AdminPanel({ currentUser, onLogout }) {
                 <button
                   onClick={handleSyncCalendar}
                   disabled={syncing}
-                  className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition disabled:bg-gray-400"
+                  className="px-6 py-2 bg-fcred text-white rounded hover:bg-fcrefdark transition disabled:bg-gray-400 font-semibold"
                 >
                   {syncing ? '⏳ Synchroniseren...' : '🔄 Google Calendar Sync'}
                 </button>

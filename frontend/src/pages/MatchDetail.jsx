@@ -111,22 +111,22 @@ export default function MatchDetail({ isAuthenticated, currentUser }) {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-10">
+      <header className="bg-fcred shadow-lg sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
           <button
             onClick={() => navigate('/')}
-            className="text-blue-600 hover:text-blue-800 text-lg"
+            className="text-white hover:text-red-100 text-lg font-semibold transition"
           >
             ← Terug
           </button>
-          <h1 className="text-2xl font-bold text-gray-800">Wedstrijddetails</h1>
+          <h1 className="text-2xl font-bold text-white">Wedstrijddetails</h1>
           {isAdmin && (
             <button
               onClick={() => setIsEditing(!isEditing)}
-              className={`px-4 py-2 rounded transition ${
+              className={`px-4 py-2 rounded transition font-semibold ${
                 isEditing
-                  ? 'bg-red-600 text-white hover:bg-red-700'
-                  : 'bg-blue-600 text-white hover:bg-blue-700'
+                  ? 'bg-white text-fcred hover:bg-red-50'
+                  : 'bg-white text-fcred hover:bg-red-50'
               }`}
             >
               {isEditing ? 'Annuleren' : '✏️ Bewerken'}

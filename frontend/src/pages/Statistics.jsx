@@ -125,20 +125,6 @@ export default function Statistics() {
             ))}
           </div>
         </div>
-              <button
-                key={option.value}
-                onClick={() => setSortBy(option.value)}
-                className={`px-4 py-2 rounded transition ${
-                  sortBy === option.value
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
-        </div>
 
         {/* Statistics Table */}
         <div className="bg-white rounded-lg shadow-md overflow-hidden">

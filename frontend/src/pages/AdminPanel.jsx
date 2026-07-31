@@ -141,17 +141,7 @@ export default function AdminPanel({ currentUser, onLogout }) {
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex-1 px-6 py-4 font-semibold transition ${
                   activeTab === tab.id
-                    ? 'border-b-2 border-blue-600 text-blue-600'
-                    : 'text-gray-600 hover:text-gray-800'
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Players Tab */}
-          {activeTab === 'players' && (
+                    ? 'border-b-2 border-fcred text-fcred'
             <div className="p-6">
               <div className="mb-6">
                 <h2 className="text-xl font-bold text-gray-800 mb-4">Speler Toevoegen</h2>
@@ -202,11 +192,17 @@ export default function AdminPanel({ currentUser, onLogout }) {
             <div className="p-6">
               <div className="mb-6">
                 <h2 className="text-xl font-bold text-gray-800 mb-2">📅 Google Calendar Sync</h2>
-                <p className="text-sm text-gray-600 mb-4">
-                  Haalt automatisch alle <strong>toekomstige</strong> evenementen uit je Google Calendar. 
-                  Alle events worden standaard als "Wedstrijd" ingesteld. 
-                  Klik op een event om het uit te sluiten als het geen wedstrijd is (bijv. BBQ).
-                </p>
+                <div className="bg-blue-50 border border-blue-200 rounded p-4 mb-4">
+                  <p className="text-sm text-gray-700 mb-2">
+                    <strong>ℹ️ Hoe werkt het?</strong>
+                  </p>
+                  <ul className="text-sm text-gray-600 space-y-1 ml-4 list-disc">
+                    <li>Haalt automatisch <strong>toekomstige</strong> evenementen uit je Google Calendar</li>
+                    <li>Oude/afgelopen evenementen worden genegeerd</li>
+                    <li>Alle opgehaalde events worden <span className="bg-fcred text-white px-2 py-1 rounded text-xs font-bold">⚽ Wedstrijd</span> gemarkeerd</li>
+                    <li>Klik de knop om het te wijzigen naar <span className="bg-gray-400 text-white px-2 py-1 rounded text-xs font-bold">📢 Event/Ander</span> (BBQ, trainingen, etc.)</li>
+                  </ul>
+                </div>
                 <button
                   onClick={handleSyncCalendar}
                   disabled={syncing}
@@ -217,9 +213,9 @@ export default function AdminPanel({ currentUser, onLogout }) {
               </div>
 
               <div>
-                <h2 className="text-xl font-bold text-gray-800 mb-4">Google Calendar Evenementen</h2>
-                <p className="text-sm text-gray-600 mb-4">
-                  Markeer welke evenementen wedstrijden zijn (BBQ/events kunnen ook weggelaten worden)
+                <h2 className="text-xl font-bold text-gray-800 mb-2">Google Calendar Evenementen</h2>
+                <p className="text-sm text-gray-600 mb-4 bg-amber-50 p-3 rounded border border-amber-200">
+                  📌 Klik de rood/grijze knop om te bepalen wat een wedstrijd is. Rood = wedstrijd (-> Dashboard). Grijs = event/training (-> verborgen).
                 </p>
                 {calendarEvents.length === 0 ? (
                   <p className="text-gray-600">Geen evenementen gevonden. Klik "Google Calendar Sync" om op te halen.</p>
@@ -238,13 +234,13 @@ export default function AdminPanel({ currentUser, onLogout }) {
                         </div>
                         <button
                           onClick={() => handleToggleCalendarEvent(event.id, event.is_match, event.title, event.event_date)}
-                          className={`px-4 py-2 rounded transition font-semibold ${
+                          className={`px-4 py-2 rounded transition font-semibold text-sm md:text-base ${
                             event.is_match
-                              ? 'bg-green-600 text-white hover:bg-green-700'
-                              : 'bg-yellow-600 text-white hover:bg-yellow-700'
+                              ? 'bg-fcred text-white hover:bg-fcrefdark'
+                              : 'bg-gray-400 text-white hover:bg-gray-500'
                           }`}
                         >
-                          {event.is_match ? '✓ Wedstrijd' : '⚠️ Geen wedstrijd'}
+                          {event.is_match ? '⚽ Wedstrijd' : '📢 Event/Ander'}
                         </button>
                       </div>
                     ))}

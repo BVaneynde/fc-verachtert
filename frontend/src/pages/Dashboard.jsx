@@ -68,41 +68,41 @@ export default function Dashboard({ isAuthenticated, currentUser }) {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Upcoming Matches */}
             <div className="md:col-span-2">
-              <div className="bg-white rounded-lg shadow-md p-6 mb-8 border-t-4 border-fcred">
+              <div className="bg-white rounded-lg shadow-md p-6 mb-8 border-t-4 border-fcred flex flex-col h-auto md:h-96">
                 <h2 className="text-2xl font-bold text-gray-800 mb-4">📅 Komende Wedstrijden</h2>
                 {upcomingMatches.length > 0 ? (
-                  <div className="space-y-3">
+                  <div className="space-y-2 overflow-y-auto pr-2">
                     {upcomingMatches.map(match => {
                       const daysUntil = Math.ceil((new Date(match.date) - new Date()) / (1000 * 60 * 60 * 24))
                       return (
                         <Link
                           key={match.id}
                           to={`/match/${match.id}`}
-                          className="block p-4 border-l-4 border-fcred hover:bg-red-50 rounded cursor-pointer transition"
+                          className="block p-3 md:p-4 border-l-4 border-fcred hover:bg-red-50 rounded cursor-pointer transition flex-shrink-0"
                         >
-                          <div className="flex justify-between items-start">
-                            <div className="flex-1">
-                              <p className="font-semibold text-gray-800">
+                          <div className="flex justify-between items-start gap-2 md:gap-4">
+                            <div className="flex-1 min-w-0">
+                              <p className="font-semibold text-gray-800 text-sm md:text-base truncate">
                                 FC Verachtert vs {match.opponent}
                               </p>
-                              <p className="text-sm text-gray-600 mt-1">
+                              <p className="text-xs md:text-sm text-gray-600 mt-1">
                                 🕐 {new Date(match.date).toLocaleDateString('nl-NL', {
-                                  weekday: 'long',
+                                  weekday: 'short',
                                   day: 'numeric',
-                                  month: 'long',
+                                  month: 'short',
                                   hour: '2-digit',
                                   minute: '2-digit'
                                 })}
                               </p>
                               {match.location && (
-                                <p className="text-sm text-gray-600">📍 {match.location}</p>
+                                <p className="text-xs md:text-sm text-gray-600">📍 {match.location}</p>
                               )}
                             </div>
-                            <div className="text-right ml-4">
-                              <span className={`inline-block px-3 py-1 rounded-full text-sm font-bold ${
+                            <div className="text-right ml-2 flex-shrink-0">
+                              <span className={`inline-block px-2 md:px-3 py-1 rounded-full text-xs md:text-sm font-bold whitespace-nowrap ${
                                 daysUntil === 0 ? 'bg-fcred text-white' : 'bg-red-100 text-fcred'
                               }`}>
-                                {daysUntil === 0 ? 'VANDAAG! 🔥' : `${daysUntil}d`}
+                                {daysUntil === 0 ? 'VANDAAG!' : `${daysUntil}d`}
                               </span>
                             </div>
                           </div>
@@ -116,10 +116,10 @@ export default function Dashboard({ isAuthenticated, currentUser }) {
               </div>
 
               {/* Recent Results */}
-              <div className="bg-white rounded-lg shadow-md p-6 border-t-4 border-fcred">
+              <div className="bg-white rounded-lg shadow-md p-6 border-t-4 border-fcred flex flex-col h-auto md:h-96">
                 <h2 className="text-2xl font-bold text-gray-800 mb-4">🏁 Recente Resultaten</h2>
                 {recentMatches.length > 0 ? (
-                  <div className="space-y-3">
+                  <div className="space-y-2 overflow-y-auto pr-2">
                     {recentMatches.map(match => {
                       const isWin = (match.score_home ?? 0) > (match.score_away ?? 0)
                       const isDraw = (match.score_home ?? 0) === (match.score_away ?? 0)
@@ -127,25 +127,25 @@ export default function Dashboard({ isAuthenticated, currentUser }) {
                         <Link
                           key={match.id}
                           to={`/match/${match.id}`}
-                          className="block p-4 border-l-4 border-fcred hover:bg-red-50 rounded cursor-pointer transition"
+                          className="block p-3 md:p-4 border-l-4 border-fcred hover:bg-red-50 rounded cursor-pointer transition flex-shrink-0"
                         >
-                          <div className="flex justify-between items-center">
-                            <div className="flex-1">
-                              <p className="font-semibold text-gray-800">
+                          <div className="flex justify-between items-center gap-2 md:gap-4">
+                            <div className="flex-1 min-w-0">
+                              <p className="font-semibold text-gray-800 text-sm md:text-base truncate">
                                 FC Verachtert vs {match.opponent}
                               </p>
-                              <p className="text-sm text-gray-600">
-                                📅 {new Date(match.date).toLocaleDateString('nl-NL')}
+                              <p className="text-xs md:text-sm text-gray-600">
+                                📅 {new Date(match.date).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short', year: '2-digit' })}
                               </p>
                             </div>
-                            <div className="text-right">
-                              <span className={`text-2xl font-bold ${
+                            <div className="text-right flex-shrink-0">
+                              <span className={`text-lg md:text-2xl font-bold ${
                                 isWin ? 'text-green-600' : isDraw ? 'text-yellow-600' : 'text-red-600'
                               }`}>
-                                {match.score_home ?? '-'} - {match.score_away ?? '-'}
+                                {match.score_home ?? '-'}-{match.score_away ?? '-'}
                               </span>
                               <p className="text-xs font-semibold text-gray-600 mt-1">
-                                {isWin ? '✅ Gewonnen' : isDraw ? '🤝 Gelijkspel' : '❌ Verloren'}
+                                {isWin ? '✅ Win' : isDraw ? '🤝 Draw' : '❌ Loss'}
                               </p>
                             </div>
                           </div>

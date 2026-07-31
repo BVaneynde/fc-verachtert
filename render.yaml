@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: fc-verachtert-backend
+    runtime: node
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && npm start
+    envVars:
+      - key: BACKEND_PORT
+        value: "5000"
+      - key: NODE_ENV
+        value: "production"
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: GOOGLE_CALENDAR_URL
+        sync: false
+
+  - type: web
+    name: fc-verachtert-frontend
+    runtime: node
+    buildCommand: cd frontend && npm install && npm run build
+    startCommand: cd frontend && npm start
+    envVars:
+      - key: VITE_BACKEND_URL
+        value: "https://fc-verachtert.onrender.com"
+      - key: VITE_SUPABASE_URL
+        sync: false
+      - key: VITE_SUPABASE_ANON_KEY
+        sync: false

@@ -1,0 +1,97 @@
+# Git Repository for FC Verachtert Wedstrijdtracker
+
+## Installation & Setup
+
+1. Install dependencies:
+```bash
+cd backend && npm install
+cd ../frontend && npm install
+```
+
+2. Create `.env` file from `.env.example`:
+```bash
+cp .env.example .env
+```
+
+3. Configure environment variables:
+- Add Supabase URL and API key
+- Add Google Calendar iCal URL
+- Generate JWT_SECRET
+
+4. Set up Supabase database:
+- Create free account at supabase.com
+- Run SQL schema: `backend/db/schema.sql`
+
+5. Start development servers:
+```bash
+# Terminal 1 - Backend
+cd backend && npm run dev
+
+# Terminal 2 - Frontend  
+cd frontend && npm run dev
+```
+
+## Project Structure
+
+### Backend (`/backend`)
+- `server.js` - Express app entry point
+- `routes/` - API endpoints (matches, players, calendar, auth)
+- `middleware/` - Authentication & authorization
+- `db/` - Database schema and migrations
+- `.env.example` - Environment variables template
+
+### Frontend (`/frontend`)
+- `src/pages/` - Page components (Dashboard, Login, AdminPanel, etc)
+- `src/utils/` - Helper functions
+- `index.html` - HTML entry point
+- `vite.config.js` - Vite config
+- `tailwind.config.js` - Tailwind CSS config
+
+## API Endpoints
+
+### Auth
+- `POST /api/auth/register` - Create admin account
+- `POST /api/auth/login` - Login
+
+### Matches
+- `GET /api/matches` - Get all matches
+- `GET /api/matches/:id` - Get match details
+- `GET /api/matches/:id/appearances` - Get player stats for match
+- `POST /api/matches` - Create match (admin)
+- `PUT /api/matches/:id` - Update match (admin)
+- `POST /api/matches/:id/appearances` - Save appearances (admin)
+
+### Players
+- `GET /api/players` - Get all active players
+- `GET /api/players/stats` - Get season statistics
+- `POST /api/players` - Add player (admin)
+- `PUT /api/players/:id` - Update player (admin)
+
+### Calendar
+- `POST /api/calendar/sync` - Sync Google Calendar
+- `GET /api/calendar/events` - Get calendar events
+- `PUT /api/calendar/:eventId/mark-as-match` - Toggle event as match
+
+## Development Notes
+
+- Database queries are marked with `TODO` comments - implement Supabase calls
+- Auth endpoints return mock data - integrate with Supabase auth
+- Frontend uses `localStorage` for auth tokens in development
+- All API errors should return consistent error format
+
+## Deployment
+
+### Frontend (Vercel)
+```bash
+npm run build
+# Deploy `frontend` folder to Vercel
+```
+
+### Backend (Railway/Render)
+```bash
+# Set environment variables on hosting platform
+# Deploy `backend` folder
+```
+
+### Database (Supabase)
+- Already hosted, just maintain connection string

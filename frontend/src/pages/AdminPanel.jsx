@@ -142,6 +142,16 @@ export default function AdminPanel({ currentUser, onLogout }) {
                 className={`flex-1 px-6 py-4 font-semibold transition ${
                   activeTab === tab.id
                     ? 'border-b-2 border-fcred text-fcred'
+                    : 'text-gray-600 hover:text-gray-800'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Players Tab */}
+          {activeTab === 'players' && (
             <div className="p-6">
               <div className="mb-6">
                 <h2 className="text-xl font-bold text-gray-800 mb-4">Speler Toevoegen</h2>

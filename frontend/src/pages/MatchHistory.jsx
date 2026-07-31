@@ -5,6 +5,7 @@ import { cleanOpponentName } from '../utils/helpers'
 
 export default function MatchHistory({ isAuthenticated, currentUser }) {
   const [matches, setMatches] = useState([])
+  const [totalMatches, setTotalMatches] = useState(0)
   const [loading, setLoading] = useState(true)
   const [sortBy, setSortBy] = useState('recent')
   const navigate = useNavigate()
@@ -18,10 +19,12 @@ export default function MatchHistory({ isAuthenticated, currentUser }) {
       setLoading(true)
       const res = await apiClient.get('/api/matches')
       
-      // Filter only past matches
+      // Filter only past matches for display
       const now = new Date()
       const pastMatches = res.data.filter(m => new Date(m.date) < now)
       
+      // Total matches (all seasons matches)
+      setTotalMatches(res.data.length)
       setMatches(pastMatches)
     } catch (error) {
       console.error('Error fetching matches:', error)
@@ -77,8 +80,9 @@ export default function MatchHistory({ isAuthenticated, currentUser }) {
 
       <main className="max-w-6xl mx-auto px-4 py-8">
         {/* Stats Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
           {[
+            { label: 'Dit seizoen', value: totalMatches, icon: '📊' },
             { label: 'Gespeeld', value: matches.length, icon: '⚽' },
             { 
               label: 'Gewonnen', 

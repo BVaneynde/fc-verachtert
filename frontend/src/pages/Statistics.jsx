@@ -55,6 +55,15 @@ export default function Statistics() {
     return 0
   })
 
+  // Calculate total matches for selected season
+  const totalSeasonMatches = matches.filter(m => {
+    const matchSeason = getSeasonYear(m.date)
+    const isSameSeason = selectedSeason === 'current' 
+      ? matchSeason === currentSeason 
+      : matchSeason === parseInt(selectedSeason)
+    return isSameSeason && new Date(m.date) < new Date()
+  }).length
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -98,6 +107,17 @@ export default function Statistics() {
                 </button>
               )
             ))}
+          </div>
+        </div>
+
+        {/* Total Matches Info */}
+        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-600 text-sm font-medium">📊 Totaal matchen dit seizoen</p>
+              <p className="text-3xl font-bold text-fcred mt-2">{totalSeasonMatches}</p>
+            </div>
+            <div className="text-5xl">⚽</div>
           </div>
         </div>
 

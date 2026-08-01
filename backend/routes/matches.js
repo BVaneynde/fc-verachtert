@@ -219,6 +219,21 @@ router.put('/mark-official-by-event', async (req, res) => {
 
     console.log(`Updated ${data.length} matches`)
 
+    // ALSO update calendar_events table for sync
+    const { data: calEvents, error: calError } = await req.supabase
+      .from('calendar_events')
+      .update({ is_match: true })
+      .ilike('title', opponent)
+      .gte('event_date', `${eventDate}T00:00:00`)
+      .lt('event_date', `${eventDate}T23:59:59`)
+      .select()
+
+    if (calError) {
+      console.error('Warning: Could not update calendar_events:', calError.message)
+    } else {
+      console.log(`Updated ${calEvents.length} calendar events`)
+    }
+
     res.json({ 
       message: `Marked ${data.length} match(es) as official`, 
       count: data.length,
@@ -226,6 +241,103 @@ router.put('/mark-official-by-event', async (req, res) => {
     })
   } catch (error) {
     console.error('Error in mark-official-by-event:', error)
+    res.status(500).json({ error: error.message })
+  }
+})
+
+// GET /api/matches/:id - Get a single match by ID
+router.get('/:id', async (req, res) => {
+  try {
+    const { id } = req.params
+
+    const { data: match, error } = await req.supabase
+      .from('matches')
+      .select('*')
+      .eq('id', id)
+      .single()
+
+    if (error || !match) {
+      return res.status(404).json({ error: 'Match not found' })
+    }
+
+    res.json(match)
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+})
+
+// PUT /api/matches/:id - Update a match by ID
+router.put('/:id', async (req, res) => {
+  try {
+    const { id } = req.params
+    const { score_home, score_away, location, notes } = req.body
+
+    const { data, error } = await req.supabase
+      .from('matches')
+      .update({
+        score_home: score_home ?? null,
+        score_away: score_away ?? null,
+        location: location ?? null,
+        notes: notes ?? null,
+        updated_at: new Date()
+      })
+      .eq('id', id)
+      .select()
+
+    if (error) throw error
+
+    res.json(data[0])
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+})
+
+// GET /api/matches/:id/appearances - Get appearances for a match
+router.get('/:id/appearances', async (req, res) => {
+  try {
+    const { id } = req.params
+
+    const { data, error } = await req.supabase
+      .from('match_appearances')
+      .select('*')
+      .eq('match_id', id)
+
+    if (error) throw error
+
+    res.json(data || [])
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+})
+
+// POST /api/matches/:id/appearances - Save appearances for a match
+router.post('/:id/appearances', async (req, res) => {
+  try {
+    const { id } = req.params
+    const appearances = req.body
+
+    if (!Array.isArray(appearances)) {
+      return res.status(400).json({ error: 'Expected array of appearances' })
+    }
+
+    const upsertData = appearances.map(app => ({
+      match_id: id,
+      player_id: app.player_id,
+      was_present: app.was_present ?? false,
+      goals: app.goals ?? 0,
+      yellow_cards: app.yellow_cards ?? 0,
+      red_cards: app.red_cards ?? 0
+    }))
+
+    const { data, error } = await req.supabase
+      .from('match_appearances')
+      .upsert(upsertData, { onConflict: 'match_id,player_id' })
+      .select()
+
+    if (error) throw error
+
+    res.json({ message: 'Appearances saved', count: data.length })
+  } catch (error) {
     res.status(500).json({ error: error.message })
   }
 })

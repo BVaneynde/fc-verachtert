@@ -155,7 +155,7 @@ export default function MatchDetail({ isAuthenticated, currentUser }) {
             </div>
             <p className="text-4xl font-light text-gray-400 mx-8">-</p>
             <div className="text-center flex-1">
-              <p className="text-gray-600 mb-2">{match.opponent}</p>
+              <p className="text-gray-600 mb-2">{cleanOpponentName(match.opponent)}</p>
               {isEditing ? (
                 <input
                   type="number"
